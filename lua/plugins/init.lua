@@ -71,6 +71,37 @@ return {
 			},
 		},
 	},
+	-- Which-key: popup of available keybindings
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {
+			preset = "helix", -- compact single-column panel, bottom-right
+			-- No popup while typing; open it on demand with :? (see init.lua)
+			triggers = {},
+			spec = {
+				{ "<leader>f", group = "Find" },
+				{ "<leader>g", group = "Git" },
+				{ "<leader>j", group = "Format" },
+			},
+		},
+		config = function(_, opts)
+			require("which-key").setup(opts)
+
+			-- Drop the lighter float background so the popup blends with the editor
+			local function clear_bg()
+				local base = { WhichKeyNormal = "NormalFloat", WhichKeyBorder = "FloatBorder", WhichKeyTitle = "FloatTitle" }
+				for group, from in pairs(base) do
+					local hl = vim.api.nvim_get_hl(0, { name = from, link = false })
+					hl.bg = nil
+					vim.api.nvim_set_hl(0, group, hl)
+				end
+			end
+			clear_bg()
+			vim.api.nvim_create_autocmd("ColorScheme", { callback = clear_bg })
+		end,
+	},
+
 	-- Mini notifyer
 	{ "nvim-mini/mini.notify", version = "*" },
 
@@ -103,11 +134,11 @@ return {
 					layout_strategy = "horizontal", -- Use horizontal layout for search results
 					layout_config = {
 						horizontal = {
-							prompt_position = "bottom", -- Put search bar at the top
+							prompt_position = "bottom", -- Put search bar at the bottom
 							preview_width = 0.55,
 						},
 					},
-					sorting_strategy = "ascending", -- Match the 'top' prompt position
+					sorting_strategy = "ascending", -- Best match at the top of the results list
 
 					-- Keeps the UI clean by showing the filename first, then the path
 					path_display = { "filename_first" },
@@ -118,9 +149,9 @@ return {
 			})
 
 			-- Keymaps
-			vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, {})
-			vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, {})
-			vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers, {}) -- Search open tabs/buffers
+			vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, { desc = "Find files" })
+			vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, { desc = "Live grep" })
+			vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers, { desc = "Find buffers" })
 		end,
 	},
 
@@ -202,21 +233,8 @@ return {
 
 		config = function()
 			require("mason-tool-installer").setup({
+				-- LSPs are installed by mason-lspconfig below
 				ensure_installed = {
-					-- LSPs
-					"clangd",
-					"omnisharp",
-					"lua_ls",
-					"pyright",
-					"rust_analyzer",
-
-					-- Web LSPs
-					"html",
-					"cssls",
-					"ts_ls",
-					"eslint",
-					"jsonls",
-
 					-- Formatters
 					"stylua",
 					"csharpier",
@@ -548,7 +566,6 @@ return {
 
 					["prettier"] = {
 						prepend_args = {
-							"--use-tabs",
 							"--tab-width",
 							"4",
 						},
@@ -737,31 +754,7 @@ return {
 				},
 			},
 
-			bigfiles = {
-				---@class snacks.bigfile.Config
-				---@field enabled? boolean
-				{
-					notify = true, -- show notification when big file detected
-					size = 1.5 * 1024 * 1024, -- 1.5MB
-					line_length = 1000, -- average line length (useful for minified files)
-					-- Enable or disable features when big file detected
-					---@param ctx {buf: number, ft:string}
-					setup = function(ctx)
-						if vim.fn.exists(":NoMatchParen") ~= 0 then
-							vim.cmd([[NoMatchParen]])
-						end
-						Snacks.util.wo(0, { foldmethod = "manual", statuscolumn = "", conceallevel = 0 })
-						vim.b.completion = false
-						vim.b.minianimate_disable = true
-						vim.b.minihipatterns_disable = true
-						vim.schedule(function()
-							if vim.api.nvim_buf_is_valid(ctx.buf) then
-								vim.bo[ctx.buf].syntax = ctx.ft
-							end
-						end)
-					end,
-				},
-			},
+			bigfile = { enabled = true },
 			dashboard = { enabled = true },
 			indent = {
 				animate = {
