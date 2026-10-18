@@ -2,16 +2,9 @@
 vim.g.mapleader = " "
 
 -- Key Binds
-vim.keymap.set("v", "<C-c>", '"+y', { desc = "Copy to system clipboard" })
-vim.keymap.set("v", "<C-x>", '"+d', { desc = "Cut to system clipboard" })
-
 vim.keymap.set("n", "<leader>t", function()
     Snacks.terminal.toggle()
 end, { desc = "Toggle Terminal" })
-
-vim.keymap.set("n", "<leader>d", function()
-    vim.diagnostic.config({ virtual_text = not vim.diagnostic.config().virtual_text })
-end, { desc = "Toggle inline diagnostics" })
 
 -- :? opens which-key with the leader keymaps (<BS> in the popup shows all keymaps)
 vim.keymap.set("c", "<CR>", function()
@@ -24,6 +17,34 @@ vim.keymap.set("c", "<CR>", function()
     return "<CR>"
 end, { expr = true, desc = "Run command, or show keymaps on :?" })
 
+-- <leader>fc fuzzy-finds files in the real command line (:find + fd)
+local find_files
+function _G.FindFiles(arg)
+    find_files = find_files or vim.fn.systemlist({ "fd", "--type", "f", "--hidden", "--exclude", ".git" })
+    return arg == "" and find_files or vim.fn.matchfuzzy(find_files, arg)
+end
+vim.o.findfunc = "v:lua.FindFiles"
+vim.api.nvim_create_autocmd("CmdlineEnter", {
+    callback = function()
+        find_files = nil -- re-list on each new command line so new files show up
+    end,
+})
+vim.keymap.set("n", "<leader>fc", ":find ", { desc = "Find files (command line)" })
+
+-- gd for every LSP; the rest is built in: grn rename, gra code action, grr references, gri implementation, gO symbols, K hover
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(event)
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "Go to definition" })
+    end,
+})
+
+-- Briefly highlight yanked text
+vim.api.nvim_create_autocmd("TextYankPost", {
+    callback = function()
+        vim.hl.on_yank()
+    end,
+})
+
 -- Basic settings
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -32,6 +53,24 @@ vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.updatetime = 250
 vim.opt.signcolumn = "yes"
+vim.opt.undofile = true -- undo history survives closing the file
+vim.opt.scrolloff = 8
+vim.opt.inccommand = "split" -- live preview of :%s/foo/bar
+vim.opt.confirm = true -- :q on a modified buffer asks instead of erroring
+vim.opt.cursorline = true
+vim.opt.showmode = false -- lualine shows the mode
+
+-- Looks
+vim.opt.winborder = "rounded" -- hover, signature and diagnostic floats
+vim.opt.fillchars = { eob = " " } -- no ~ after the end of the buffer
+-- Full diagnostic message below the cursor's line only; no inline text on other lines
+vim.diagnostic.config({
+    virtual_text = false,
+    virtual_lines = { current_line = true },
+})
+
+-- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
+require("vim._core.ui2").enable({})
 
 -- Indentation
 vim.opt.tabstop = 4

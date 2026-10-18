@@ -69,6 +69,15 @@ return {
 				end,
 				desc = "Flash",
 			},
+			-- Select a treesitter node by label
+			{
+				"S",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "Flash Treesitter",
+			},
 		},
 	},
 	-- Which-key: popup of available keybindings
@@ -90,7 +99,8 @@ return {
 
 			-- Drop the lighter float background so the popup blends with the editor
 			local function clear_bg()
-				local base = { WhichKeyNormal = "NormalFloat", WhichKeyBorder = "FloatBorder", WhichKeyTitle = "FloatTitle" }
+				local base =
+					{ WhichKeyNormal = "NormalFloat", WhichKeyBorder = "FloatBorder", WhichKeyTitle = "FloatTitle" }
 				for group, from in pairs(base) do
 					local hl = vim.api.nvim_get_hl(0, { name = from, link = false })
 					hl.bg = nil
@@ -101,9 +111,6 @@ return {
 			vim.api.nvim_create_autocmd("ColorScheme", { callback = clear_bg })
 		end,
 	},
-
-	-- Mini notifyer
-	{ "nvim-mini/mini.notify", version = "*" },
 
 	-- Render markdown
 	{
@@ -117,42 +124,6 @@ return {
 			enabled = true,
 			file_types = { "markdown" },
 		},
-	},
-
-	-- Fuzzy finder
-	{
-		"nvim-telescope/telescope.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		config = function()
-			local telescope = require("telescope")
-
-			telescope.setup({
-				defaults = {
-					-- Options: 'horizontal', 'vertical', 'center', 'cursor'
-					layout_strategy = "horizontal", -- Use horizontal layout for search results
-					layout_config = {
-						horizontal = {
-							prompt_position = "bottom", -- Put search bar at the bottom
-							preview_width = 0.55,
-						},
-					},
-					sorting_strategy = "ascending", -- Best match at the top of the results list
-
-					-- Keeps the UI clean by showing the filename first, then the path
-					path_display = { "filename_first" },
-
-					-- Ignore folders you don't want to search through
-					file_ignore_patterns = { "node_modules", ".git/", "bin/", "obj/" },
-				},
-			})
-
-			-- Keymaps
-			vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, { desc = "Find files" })
-			vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, { desc = "Live grep" })
-			vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers, { desc = "Find buffers" })
-		end,
 	},
 
 	-- Treesitter
@@ -175,6 +146,15 @@ return {
 				"cpp",
 				"c_sharp",
 
+				-- Shell / config / git
+				"bash",
+				"fish",
+				"toml",
+				"sql",
+				"diff",
+				"gitcommit",
+				"regex",
+
 				-- Web
 				"html",
 				"css",
@@ -187,28 +167,8 @@ return {
 				"markdown_inline",
 			})
 
-			-- Enable Treesitter highlighting
+			-- Enable Treesitter highlighting for every filetype that has a parser
 			vim.api.nvim_create_autocmd("FileType", {
-				pattern = {
-					"lua",
-					"python",
-					"rust",
-					"c",
-					"cpp",
-					"cs",
-
-					"html",
-					"css",
-					"javascript",
-					"javascriptreact",
-					"typescript",
-					"typescriptreact",
-					"json",
-					"jsonc",
-					"yaml",
-					"markdown",
-				},
-
 				callback = function()
 					pcall(vim.treesitter.start)
 				end,
@@ -246,27 +206,16 @@ return {
 		end,
 	},
 
-	-- Auto-completion
+	-- Snippets
 	{
-		"hrsh7th/nvim-cmp",
-
+		"L3MON4D3/LuaSnip",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
-
-			"L3MON4D3/LuaSnip",
-			"saadparwaiz1/cmp_luasnip",
 			"rafamadriz/friendly-snippets",
 		},
 
 		config = function()
-			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-
 			-- Don't let <Tab> jump back into snippets you already left
-			luasnip.config.setup({
+			require("luasnip").config.setup({
 				region_check_events = "InsertEnter",
 				delete_check_events = "TextChanged",
 			})
@@ -274,65 +223,55 @@ return {
 			-- HTML / CSS / JS snippets from friendly-snippets
 			require("luasnip.loaders.from_vscode").lazy_load()
 
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-
-				mapping = cmp.mapping.preset.insert({
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-e>"] = cmp.mapping.abort(),
-
-					-- Enter confirms only if you selected something
-					["<CR>"] = cmp.mapping.confirm({
-						select = false,
-					}),
-
-					-- Tab = next completion/snippet
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						elseif luasnip.expand_or_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-
-					-- Shift+Tab = previous completion/snippet
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						elseif luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-				}),
-
-				sources = cmp.config.sources({
-					{
-						name = "nvim_lsp",
-					},
-					{
-						name = "luasnip",
-					},
-					{
-						name = "path",
-					},
-				}, {
-					{
-						name = "buffer",
-					},
-				}),
+			-- Revo snippets in snippets/
+			require("luasnip.loaders.from_vscode").lazy_load({
+				paths = { vim.fn.stdpath("config") .. "/snippets" },
 			})
 		end,
+	},
+
+	-- Auto-completion (also sets LSP completion capabilities for every server)
+	{
+		"saghen/blink.cmp",
+		version = "1.*", -- release tags ship the prebuilt fuzzy matcher
+		dependencies = {
+			"L3MON4D3/LuaSnip",
+		},
+		opts = {
+			snippets = { preset = "luasnip" },
+
+			-- Enter confirms only if you selected something; Tab = next completion/snippet
+			keymap = {
+				preset = "enter",
+				["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+				["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+			},
+
+			-- Minimal look: plain list of label + kind, no border, no scrollbar,
+			-- no popups unless asked (<C-space> toggles docs, built-in <C-s> shows the signature)
+			completion = {
+				list = { selection = { preselect = false } },
+				menu = {
+					border = "none",
+					scrollbar = false,
+					draw = { columns = { { "label" }, { "kind" } } },
+				},
+				documentation = { auto_show = false },
+			},
+
+			signature = { enabled = false },
+
+			-- Show matches as you type :find (the <leader>fc file search)
+			cmdline = {
+				completion = {
+					menu = {
+						auto_show = function()
+							return vim.fn.getcmdline():match("^find ") ~= nil
+						end,
+					},
+				},
+			},
+		},
 	},
 
 	-- Mason LSP config
@@ -363,101 +302,35 @@ return {
 		end,
 	},
 
-	-- LSP
+	-- LSP: server defaults come from nvim-lspconfig, mason-lspconfig enables
+	-- every installed server, and blink.cmp adds completion capabilities
 	{
 		"neovim/nvim-lspconfig",
 
 		dependencies = {
 			"williamboman/mason-lspconfig.nvim",
-
-			-- IMPORTANT:
-			-- Make sure completion exists before cmp_nvim_lsp is used.
-			"hrsh7th/nvim-cmp",
-			"hrsh7th/cmp-nvim-lsp",
 		},
 
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 			-- C#
 			vim.lsp.config("omnisharp", {
 				cmd = {
 					"omnisharp",
 				},
-
-				capabilities = capabilities,
-			})
-
-			-- Lua
-			vim.lsp.config("lua_ls", {
-				capabilities = capabilities,
-
-				settings = {
-					Lua = {
-						diagnostics = {
-							globals = {
-								"vim",
-							},
-						},
-					},
-				},
-			})
-
-			-- JavaScript / TypeScript / JSX / TSX / React
-			vim.lsp.config("ts_ls", {
-				capabilities = capabilities,
-			})
-
-			-- ESLint
-			vim.lsp.config("eslint", {
-				capabilities = capabilities,
-			})
-
-			-- HTML
-			vim.lsp.config("html", {
-				capabilities = capabilities,
-			})
-
-			-- CSS
-			vim.lsp.config("cssls", {
-				capabilities = capabilities,
-			})
-
-			-- JSON
-			vim.lsp.config("jsonls", {
-				capabilities = capabilities,
-			})
-
-			-- clangd
-			vim.lsp.config("clangd", {
-				capabilities = capabilities,
-			})
-
-			-- Python
-			vim.lsp.config("pyright", {
-				capabilities = capabilities,
-			})
-
-			-- Rust
-			vim.lsp.config("rust_analyzer", {
-				capabilities = capabilities,
-			})
-
-			vim.lsp.enable({
-				"clangd",
-				"omnisharp",
-				"lua_ls",
-				"pyright",
-				"rust_analyzer",
-
-				-- Web
-				"html",
-				"cssls",
-				"ts_ls",
-				"eslint",
-				"jsonls",
 			})
 		end,
+	},
+
+	-- Lua LSP knows the Neovim API and your installed plugins (replaces globals = { "vim" })
+	{
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = {
+			library = {
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				{ path = "snacks.nvim", words = { "Snacks" } },
+			},
+		},
 	},
 
 	-- Formatter
@@ -610,6 +483,9 @@ return {
 				options = {
 					theme = "auto",
 					icons_enabled = true,
+					globalstatus = true, -- one statusline across all splits
+					section_separators = { left = "", right = "" }, -- rounded "bubble" ends
+					component_separators = "",
 				},
 			})
 		end,
@@ -648,90 +524,6 @@ return {
 		},
 	},
 
-	-- Commenting
-	{
-		"numToStr/Comment.nvim",
-		config = function()
-			require("Comment").setup()
-		end,
-	},
-	-- File explorer
-	{
-		"nvim-tree/nvim-tree.lua",
-
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-
-		config = function()
-			require("nvim-tree").setup({
-				view = {
-					width = 30,
-					side = "left",
-					number = false,
-					relativenumber = false,
-				},
-
-				filters = {
-					dotfiles = false,
-
-					custom = {
-						"^.git$",
-						"node_modules",
-						".cache",
-					},
-				},
-
-				git = {
-					enable = true,
-					ignore = false,
-				},
-
-				renderer = {
-					icons = {
-						show = {
-							git = true,
-							folder = true,
-							file = true,
-							folder_arrow = true,
-						},
-					},
-
-					indent_markers = {
-						enable = true,
-					},
-
-					highlight_git = true,
-					highlight_opened_files = "name",
-				},
-
-				diagnostics = {
-					enable = true,
-					show_on_dirs = true,
-
-					icons = {
-						hint = "󰌵",
-						info = "󰋼",
-						warning = "",
-						error = "",
-					},
-				},
-
-				update_focused_file = {
-					enable = true,
-					update_root = false,
-				},
-
-				disable_netrw = true,
-				hijack_netrw = true,
-			})
-
-			vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", {
-				desc = "Toggle file explorer",
-			})
-		end,
-	},
-
 	-- Snacks.nvim
 	{
 		"folke/snacks.nvim",
@@ -754,7 +546,6 @@ return {
 				},
 			},
 
-			bigfile = { enabled = true },
 			dashboard = { enabled = true },
 			indent = {
 				animate = {
@@ -772,8 +563,90 @@ return {
 			animate = { enabled = true },
 			scroll = { enabled = true },
 			words = { enabled = true }, -- Highlights matching variables under cursor
+			input = { enabled = true }, -- Nicer vim.ui.input (LSP rename prompt)
+			explorer = { enabled = true }, -- File explorer, also opens on `nvim <dir>`
+
+			-- Fuzzy finder; also styles vim.ui.select (code actions)
+			picker = {
+				-- Looks like :find in the command line: a plain list above a prompt on the last line
+				layout = { preset = "cmdline" },
+				layouts = {
+					cmdline = {
+						reverse = true, -- best match sits right above the prompt
+						layout = {
+							box = "vertical",
+							backdrop = false,
+							row = -1,
+							width = 0,
+							height = 4, -- 3 results + the prompt
+							border = "top",
+							-- Thin top line in the split-separator color
+							wo = { winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator" },
+							-- Editor background, like the real command line
+							{
+								win = "list",
+								border = "none",
+								wo = { winhighlight = "NormalFloat:Normal,CursorLine:Visual" },
+							},
+							{
+								win = "input",
+								height = 1,
+								border = "none",
+								wo = { winhighlight = "NormalFloat:Normal" },
+							},
+						},
+					},
+				},
+				icons = { files = { enabled = false } },
+				sources = {
+					-- Ignore folders you don't want to search through
+					files = { prompt = ":find ", exclude = { "node_modules", "bin", "obj" } },
+					grep = { prompt = ":grep ", exclude = { "node_modules", "bin", "obj" } },
+					buffers = { prompt = ":buffer " },
+					explorer = {
+						icons = { files = { enabled = true } },
+						hidden = true, -- show dotfiles; gitignored files stay hidden (press I to show)
+						exclude = { ".git", "node_modules", ".cache" },
+						jump = { close = true }, -- close after opening a file
+						-- No search bar; press / in the explorer to search
+						layout = { hidden = { "input" }, layout = { width = 24, min_width = 24 } },
+					},
+				},
+			},
 		},
 		keys = {
+			-- Finder
+			{
+				"<leader>ff",
+				function()
+					require("snacks").picker.files()
+				end,
+				desc = "Find files",
+			},
+			{
+				"<leader>fg",
+				function()
+					require("snacks").picker.grep()
+				end,
+				desc = "Live grep",
+			},
+			{
+				"<leader>fb",
+				function()
+					require("snacks").picker.buffers()
+				end,
+				desc = "Find buffers",
+			},
+
+			-- File explorer
+			{
+				"<leader>e",
+				function()
+					require("snacks").explorer()
+				end,
+				desc = "Toggle file explorer",
+			},
+
 			-- Shortcut to open the floating LazyGit window (<leader>gg)
 			{
 				"<leader>gg",
@@ -802,7 +675,7 @@ return {
 		opts = {
 			python = vim.fn.expand("~/.local/share/better-sql-venv/bin/python"),
 			connections = {
-				supabase = "host=aws-0-eu-central-1.pooler.supabase.com port=5432 dbname=postgres user=postgres.zurpazevlvtylnzvagoo sslmode=require",
+				supabase = "service=supabase", -- host/user live in ~/.pg_service.conf, password in ~/.pgpass
 			},
 		},
 	},

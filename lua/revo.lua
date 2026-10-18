@@ -18,16 +18,11 @@ local executable = vim.g.revo_executable or vim.fn.exepath("revo")
 if executable == "" then
 	executable = vim.fn.expand("~/.local/bin/revo")
 end
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-local has_cmp, cmp = pcall(require, "cmp_nvim_lsp")
-if has_cmp then
-	capabilities = cmp.default_capabilities(capabilities)
-end
+-- Completion capabilities come from blink.cmp, which sets them for every server.
 vim.lsp.config("revo", {
 	cmd = { executable, "lsp" },
 	filetypes = { "revo" },
 	root_markers = { "lib.json", "exe.json", ".git" },
-	capabilities = capabilities,
 })
 vim.lsp.enable("revo")
 
@@ -68,10 +63,6 @@ vim.api.nvim_create_autocmd("FileType", {
 		if not ok then
 			vim.notify("Revo highlighting unavailable: " .. tostring(err), vim.log.levels.WARN)
 		end
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, {
-			buffer = event.buf,
-			desc = "Go to definition",
-		})
 	end,
 })
 
