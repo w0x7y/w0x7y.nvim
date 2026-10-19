@@ -74,13 +74,13 @@ snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to l
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
 ~ snacks.nvim for the picker, explorer, terminal, lazygit, dashboard, smooth scroll and indent guides\
-~ the picker sits on the last line like `:find`, three results above a prompt\
+~ the picker sits on the last line like `:find`, up to three results above a prompt. it shrinks to fit fewer\
 ~ the explorer's rename, add, copy and delete prompts use that same bottom bar\
 ~ blink.cmp with luasnip and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
 ~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier, all at 4 spaces\
 ~ diagnostics show in full under the cursor's line and nowhere else\
-~ messages open in floats, so no "press ENTER" prompts\
+~ no command bar until you type `:`. messages open in floats that fade after 4 seconds, so no "press ENTER" prompts\
 ~ treesitter, lualine, gitsigns, autopairs, ts-autotag, render-markdown, lazydev\
 ~ [better-sql.nvim](https://github.com/w0x7y/better-sql.nvim) with a `supabase` connection read from `~/.pg_service.conf`
 

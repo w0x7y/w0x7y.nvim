@@ -70,7 +70,9 @@ vim.diagnostic.config({
 })
 
 -- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
-require("vim._core.ui2").enable({})
+-- cmdheight 0: the command line only shows while you type, messages fade after the timeout
+require("vim._core.ui2").enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
+vim.opt.cmdheight = 0
 
 -- Indentation
 vim.opt.tabstop = 4

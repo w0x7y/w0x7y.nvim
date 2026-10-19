@@ -1,3 +1,16 @@
+-- Shrink a bottom-bar picker to its results, up to 3 rows
+local function fit_height(picker)
+	local update = picker.list.update
+	picker.list.update = function(list, ...)
+		update(list, ...)
+		local height = math.max(math.min(list:count(), 3), 1) + 1 -- results + the prompt
+		if picker.layout.opts.layout.height ~= height then
+			picker.layout.opts.layout.height = height
+			picker.layout:update()
+		end
+	end
+end
+
 return {
 	-- RevoFMT
 	{
@@ -614,7 +627,10 @@ return {
 						layout = {
 							box = "vertical",
 							backdrop = false,
-							row = -1,
+							-- Bottom row on lualine, which drops to the last line when cmdheight is 0
+							row = function(win)
+								return vim.o.lines - vim.o.cmdheight - 1 - win.opts.height
+							end,
 							width = 0,
 							height = 4, -- 3 results + the prompt
 							border = "top",
@@ -638,9 +654,9 @@ return {
 				icons = { files = { enabled = false } },
 				sources = {
 					-- Ignore folders you don't want to search through
-					files = { prompt = ":find ", exclude = { "node_modules", "bin", "obj" } },
-					grep = { prompt = ":grep ", exclude = { "node_modules", "bin", "obj" } },
-					buffers = { prompt = ":buffer " },
+					files = { prompt = ":find ", exclude = { "node_modules", "bin", "obj" }, on_show = fit_height },
+					grep = { prompt = ":grep ", exclude = { "node_modules", "bin", "obj" }, on_show = fit_height },
+					buffers = { prompt = ":buffer ", on_show = fit_height },
 					explorer = {
 						icons = { files = { enabled = true } },
 						hidden = true, -- show dotfiles; gitignored files stay hidden (press I to show)
