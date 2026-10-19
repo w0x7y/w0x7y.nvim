@@ -6,6 +6,11 @@ local function fit_height(picker)
 		local height = math.max(math.min(list:count(), rows), 1) + 1 -- results + the prompt
 		if picker.layout.opts.layout.height ~= height then
 			picker.layout.opts.layout.height = height
+			for _, box in ipairs(picker.layout.opts.layout) do
+				if box.win == "list" then
+					box.height = height - 1 -- vim.ui.select sets a fixed list height; keep it in step
+				end
+			end
 			picker.layout:update()
 			-- The layout resizes with events off, so the list never hears about its new height
 			list.state.height = vim.api.nvim_win_get_height(list.win.win)
@@ -102,6 +107,7 @@ return {
 	-- Render markdown
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
+		ft = "markdown",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
@@ -166,6 +172,7 @@ return {
 	-- Mason
 	{
 		"williamboman/mason.nvim",
+		cmd = "Mason", -- otherwise loads with the LSP setup below
 		config = function()
 			require("mason").setup()
 		end,
@@ -174,6 +181,7 @@ return {
 	-- Automatically install LSPs + formatters
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		event = "VeryLazy", -- checks installs after the UI is up
 		dependencies = {
 			"williamboman/mason.nvim",
 		},
@@ -285,23 +293,13 @@ return {
 					},
 				},
 			},
-
-			-- Show matches as you type :find (the <leader>fc file search)
-			cmdline = {
-				completion = {
-					menu = {
-						auto_show = function()
-							return vim.fn.getcmdline():match("^find ") ~= nil
-						end,
-					},
-				},
-			},
 		},
 	},
 
 	-- Mason LSP config
 	{
 		"williamboman/mason-lspconfig.nvim",
+		lazy = true, -- loaded by nvim-lspconfig
 
 		dependencies = {
 			"williamboman/mason.nvim",
@@ -331,6 +329,7 @@ return {
 	-- every installed server, and blink.cmp adds completion capabilities
 	{
 		"neovim/nvim-lspconfig",
+		event = { "BufReadPre", "BufNewFile" },
 
 		dependencies = {
 			"williamboman/mason-lspconfig.nvim",
@@ -512,6 +511,28 @@ return {
 					section_separators = { left = "", right = "" }, -- rounded "bubble" ends
 					component_separators = "",
 				},
+				sections = {
+					lualine_x = {
+						-- showmode is off and the command bar is hidden, so show macro recording here
+						{
+							function()
+								return "recording @" .. vim.fn.reg_recording()
+							end,
+							cond = function()
+								return vim.fn.reg_recording() ~= ""
+							end,
+							color = "WarningMsg",
+						},
+						"encoding",
+						"fileformat",
+						"filetype",
+					},
+				},
+			})
+			vim.api.nvim_create_autocmd({ "RecordingEnter", "RecordingLeave" }, {
+				callback = function()
+					vim.schedule(require("lualine").refresh) -- the register is still set during RecordingLeave
+				end,
 			})
 		end,
 	},
@@ -631,6 +652,17 @@ return {
 					files = { prompt = ":find ", exclude = { "node_modules", "bin", "obj" }, on_show = fit_height },
 					grep = { prompt = ":grep ", exclude = { "node_modules", "bin", "obj" }, on_show = fit_height },
 					buffers = { prompt = ":buffer ", on_show = fit_height },
+					keymaps = { prompt = ":map ", on_show = fit_height },
+					lsp_references = { prompt = ":references ", on_show = fit_height },
+					-- vim.ui.select (code actions, confirmations): its title becomes the prompt
+					select = {
+						layout = { preset = "cmdline" },
+						on_show = function(picker)
+							picker.opts.prompt = picker.opts.title .. " "
+							picker.input:update()
+							fit_height(picker)
+						end,
+					},
 					explorer = {
 						icons = { files = { enabled = true } },
 						hidden = true, -- show dotfiles; gitignored files stay hidden (press I to show)
@@ -646,14 +678,10 @@ return {
 			local Snacks = require("snacks")
 			Snacks.setup(opts)
 
-			-- Explorer rename/add/copy prompt on the bottom line, like <leader>ff
+			-- Every vim.ui.input prompt (LSP rename, explorer rename/add/copy) on the bottom line, like <leader>ff
 			local input = Snacks.input.input
 			local function cmdline_input(o, on_confirm)
-				local explorer = Snacks.picker.get({ source = "explorer" })[1]
-				if not (explorer and explorer.list.win.win == vim.api.nvim_get_current_win()) then
-					return input(o, on_confirm)
-				end
-				-- Snacks' prompts are "New File Name", "Add a new file ..." and "Copy to"
+				-- LSP's "New Name", explorer's "New File Name", "Add a new file ..." and "Copy to"
 				local prompt = ({ New = ":rename ", Add = ":new ", Copy = ":copy " })[(o.prompt or ""):match("%a+")]
 					or o.prompt
 					or ""
@@ -678,11 +706,10 @@ return {
 			Snacks.input.input = cmdline_input
 			vim.ui.input = cmdline_input
 
-			-- Delete/move confirmations in the same place
+			-- Delete/move confirmations: the select source puts them in the bottom bar.
+			-- Same as snacks' own, minus its 60-column width cap.
 			Snacks.picker.util.confirm = function(prompt, fn)
-				Snacks.picker.select({ "No", "Yes" }, {
-					snacks = { prompt = prompt .. " ", layout = { preset = "cmdline", layout = { height = 3 } } }, -- Yes + No + prompt
-				}, function(_, idx)
+				Snacks.picker.select({ "No", "Yes" }, { prompt = prompt }, function(_, idx)
 					if idx == 2 then
 						fn()
 					end
@@ -711,6 +738,20 @@ return {
 					require("snacks").picker.buffers()
 				end,
 				desc = "Find buffers",
+			},
+			{
+				"<leader>fk",
+				function()
+					require("snacks").picker.keymaps()
+				end,
+				desc = "Find keymaps",
+			},
+			{
+				"grr",
+				function()
+					require("snacks").picker.lsp_references()
+				end,
+				desc = "References",
 			},
 
 			-- File explorer

@@ -34,7 +34,7 @@ mason then installs the language servers and formatters
 
 | program | for |
 |---|---|
-| `fd` | `<leader>ff`, `<leader>fc` |
+| `fd` | `<leader>ff` |
 | `rg` | `<leader>fg` |
 | `lazygit` | `<leader>gg`, `<leader>gf` |
 | `fish` | the terminal |
@@ -53,7 +53,7 @@ leader is `<space>`
 | `<leader>ff` | find files |
 | `<leader>fg` | live grep |
 | `<leader>fb` | buffers |
-| `<leader>fc` | `:find` in the real command line, fuzzy matched |
+| `<leader>fk` | search every keymap |
 | `<leader>e` | file explorer |
 | `<leader>t` | terminal on the right |
 | `<leader>gg` | lazygit |
@@ -62,8 +62,9 @@ leader is `<space>`
 | `s` | flash jump |
 | `S` | flash select a treesitter node |
 | `gd` | go to definition |
+| `grr` | references, in the picker |
 
-the other lsp keys are neovim's own: `grn` rename, `gra` code action, `grr` references, `gri` implementation, `gO` symbols, `K` hover
+the other lsp keys are neovim's own: `grn` rename, `gra` code action, `gri` implementation, `gO` symbols, `K` hover
 
 in completion, `<Tab>` and `<S-Tab>` move through items and snippet fields\
 `<CR>` only confirms an item you picked, `<C-space>` shows its docs\
@@ -74,12 +75,13 @@ snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to l
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
 ~ snacks.nvim for the picker, explorer, terminal, lazygit, dashboard, smooth scroll and indent guides\
 ~ the picker sits on the last line like `:find`, its height fits the number of results\
-~ the explorer's rename, add, copy and delete prompts use that same bottom bar\
+~ every prompt uses that same bottom bar: lsp rename, code actions, and the explorer's rename, add, copy and delete\
 ~ blink.cmp with luasnip and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
 ~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier, all at 4 spaces\
 ~ diagnostics show in full under the cursor's line and nowhere else\
 ~ the command bar hides itself. it comes back for a command or message and hides after 2 idle seconds. no "press ENTER" prompts\
+~ lualine shows `recording @q` while a macro records\
 ~ treesitter, lualine, gitsigns, autopairs, ts-autotag, render-markdown, lazydev\
 ~ [better-sql.nvim](https://github.com/w0x7y/better-sql.nvim) with a `supabase` connection read from `~/.pg_service.conf`
 

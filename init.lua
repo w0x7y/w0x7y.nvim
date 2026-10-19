@@ -6,20 +6,6 @@ vim.keymap.set("n", "<leader>t", function()
 	Snacks.terminal.toggle()
 end, { desc = "Toggle Terminal" })
 
--- <leader>fc fuzzy-finds files in the real command line (:find + fd)
-local find_files
-function _G.FindFiles(arg)
-	find_files = find_files or vim.fn.systemlist({ "fd", "--type", "f", "--hidden", "--exclude", ".git" })
-	return arg == "" and find_files or vim.fn.matchfuzzy(find_files, arg)
-end
-vim.o.findfunc = "v:lua.FindFiles"
-vim.api.nvim_create_autocmd("CmdlineEnter", {
-	callback = function()
-		find_files = nil -- re-list on each new command line so new files show up
-	end,
-})
-vim.keymap.set("n", "<leader>fc", ":find ", { desc = "Find files (command line)" })
-
 -- gd for every LSP; the rest is built in: grn rename, gra code action, grr references, gri implementation, gO symbols, K hover
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
