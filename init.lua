@@ -3,35 +3,35 @@ vim.g.mapleader = " "
 
 -- Key Binds
 vim.keymap.set("n", "<leader>t", function()
-    Snacks.terminal.toggle()
+	Snacks.terminal.toggle()
 end, { desc = "Toggle Terminal" })
 
 -- <leader>fc fuzzy-finds files in the real command line (:find + fd)
 local find_files
 function _G.FindFiles(arg)
-    find_files = find_files or vim.fn.systemlist({ "fd", "--type", "f", "--hidden", "--exclude", ".git" })
-    return arg == "" and find_files or vim.fn.matchfuzzy(find_files, arg)
+	find_files = find_files or vim.fn.systemlist({ "fd", "--type", "f", "--hidden", "--exclude", ".git" })
+	return arg == "" and find_files or vim.fn.matchfuzzy(find_files, arg)
 end
 vim.o.findfunc = "v:lua.FindFiles"
 vim.api.nvim_create_autocmd("CmdlineEnter", {
-    callback = function()
-        find_files = nil -- re-list on each new command line so new files show up
-    end,
+	callback = function()
+		find_files = nil -- re-list on each new command line so new files show up
+	end,
 })
 vim.keymap.set("n", "<leader>fc", ":find ", { desc = "Find files (command line)" })
 
 -- gd for every LSP; the rest is built in: grn rename, gra code action, grr references, gri implementation, gO symbols, K hover
 vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(event)
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "Go to definition" })
-    end,
+	callback = function(event)
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "Go to definition" })
+	end,
 })
 
 -- Briefly highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
-    callback = function()
-        vim.hl.on_yank()
-    end,
+	callback = function()
+		vim.hl.on_yank()
+	end,
 })
 
 -- Basic settings
@@ -54,21 +54,41 @@ vim.opt.winborder = "rounded" -- hover, signature and diagnostic floats
 vim.opt.fillchars = { eob = " " } -- no ~ after the end of the buffer
 -- Full diagnostic message below the cursor's line only; no inline text on other lines
 vim.diagnostic.config({
-    virtual_text = false,
-    virtual_lines = { current_line = true },
+	virtual_text = false,
+	virtual_lines = { current_line = true },
 })
 
--- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
--- cmdheight 0: the command line only shows while you type, messages fade after the timeout
--- Messages: bottom-right box on the editor background, border (from winborder) in the <leader>ff outline color
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "msg",
-    callback = function()
-        vim.wo.winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator,Search:,CurSearch:,IncSearch:"
-    end,
-})
-require("vim._core.ui2").enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
+-- Experimental 0.12 message/cmdline UI: no "Press ENTER" prompts
+local ui2 = require("vim._core.ui2")
+ui2.enable({})
 vim.opt.cmdheight = 0
+
+-- The command bar is hidden. A command or message brings it up, and it hides
+-- again after 2 seconds without a new one.
+local hide_bar = vim.uv.new_timer()
+local function show_bar()
+	if ui2.cmdheight == 0 then
+		pcall(function() -- resizing windows isn't allowed in every context
+			vim.o.cmdheight = 1
+		end)
+	end
+	hide_bar:start(
+		2000,
+		0,
+		vim.schedule_wrap(function()
+			if vim.fn.mode() == "c" then
+				return show_bar() -- still typing a command
+			end
+			vim.o.cmdheight = 0
+		end)
+	)
+end
+local msg_show = ui2.msg.msg_show
+ui2.msg.msg_show = function(...)
+	show_bar()
+	return msg_show(...)
+end
+vim.api.nvim_create_autocmd("CmdlineLeave", { callback = show_bar })
 
 -- Indentation
 vim.opt.tabstop = 4
@@ -87,14 +107,14 @@ vim.opt.splitright = true
 -- Lazy bootstrap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable",
-        lazypath,
-    })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 

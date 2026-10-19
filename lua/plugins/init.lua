@@ -2,14 +2,18 @@
 local function fit_height(picker)
 	local update = picker.list.update
 	picker.list.update = function(list, ...)
-		update(list, ...)
 		local rows = vim.o.lines - vim.o.cmdheight - 2 -- leave room for the top outline and the prompt
 		local height = math.max(math.min(list:count(), rows), 1) + 1 -- results + the prompt
 		if picker.layout.opts.layout.height ~= height then
 			picker.layout.opts.layout.height = height
 			picker.layout:update()
+			-- The layout resizes with events off, so the list never hears about its new height
+			list.state.height = vim.api.nvim_win_get_height(list.win.win)
+			list.dirty = true
 		end
+		update(list, ...)
 	end
+	picker.list:update() -- results that arrived before the picker showed
 end
 
 return {

@@ -79,7 +79,7 @@ snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to l
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
 ~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier, all at 4 spaces\
 ~ diagnostics show in full under the cursor's line and nowhere else\
-~ no command bar until you type `:`. messages open in floats that fade after 4 seconds, so no "press ENTER" prompts\
+~ the command bar hides itself. it comes back for a command or message and hides after 2 idle seconds. no "press ENTER" prompts\
 ~ treesitter, lualine, gitsigns, autopairs, ts-autotag, render-markdown, lazydev\
 ~ [better-sql.nvim](https://github.com/w0x7y/better-sql.nvim) with a `supabase` connection read from `~/.pg_service.conf`
 
