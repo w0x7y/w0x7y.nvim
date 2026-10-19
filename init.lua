@@ -71,6 +71,14 @@ vim.diagnostic.config({
 
 -- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
 -- cmdheight 0: the command line only shows while you type, messages fade after the timeout
+-- Messages as bare text above lualine: no border, editor background
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "msg",
+    callback = function()
+        vim.api.nvim_win_set_config(0, { border = "none" })
+        vim.wo.winhighlight = "NormalFloat:Normal,Search:,CurSearch:,IncSearch:"
+    end,
+})
 require("vim._core.ui2").enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
 vim.opt.cmdheight = 0
 
