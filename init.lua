@@ -1,11 +1,6 @@
 -- Leader key
 vim.g.mapleader = " "
 
--- Key Binds
-vim.keymap.set("n", "<leader>t", function()
-	Snacks.terminal.toggle()
-end, { desc = "Toggle Terminal" })
-
 -- gd for every LSP; the rest is built in: grn rename, gra code action, grr references, gri implementation, gO symbols, K hover
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)

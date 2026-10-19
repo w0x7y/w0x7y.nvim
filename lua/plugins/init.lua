@@ -577,13 +577,6 @@ return {
 		lazy = false,
 		---@type snacks.Config
 		opts = {
-			terminal = {
-				shell = "fish",
-				win = {
-					position = "right",
-					width = 0.4,
-				},
-			},
 			image = {
 				doc = {
 					inline = false, -- show it in a popup next to the cursor instead of in the buffer
