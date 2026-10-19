@@ -1,9 +1,10 @@
--- Shrink a bottom-bar picker to its results, up to 3 rows
+-- Size a bottom-bar picker to its results, up to the screen height
 local function fit_height(picker)
 	local update = picker.list.update
 	picker.list.update = function(list, ...)
 		update(list, ...)
-		local height = math.max(math.min(list:count(), 3), 1) + 1 -- results + the prompt
+		local rows = vim.o.lines - vim.o.cmdheight - 2 -- leave room for the top outline and the prompt
+		local height = math.max(math.min(list:count(), rows), 1) + 1 -- results + the prompt
 		if picker.layout.opts.layout.height ~= height then
 			picker.layout.opts.layout.height = height
 			picker.layout:update()
@@ -601,7 +602,7 @@ return {
 								return vim.o.lines - vim.o.cmdheight - 1 - win.opts.height
 							end,
 							width = 0,
-							height = 4, -- 3 results + the prompt
+							height = 4, -- starting size; fit_height resizes it to the results
 							border = "top",
 							-- Thin top line in the split-separator color
 							wo = { winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator" },

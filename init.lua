@@ -60,19 +60,14 @@ vim.diagnostic.config({
 
 -- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
 -- cmdheight 0: the command line only shows while you type, messages fade after the timeout
-local ui2 = require("vim._core.ui2")
-ui2.enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
--- Messages span the full width above lualine, with the <leader>ff top outline.
--- ui2 resizes the window on every message, so reapply after each reposition.
-local set_pos = ui2.msg.set_pos
-ui2.msg.set_pos = function(tgt)
-    set_pos(tgt)
-    local win = ui2.wins.msg
-    if vim.api.nvim_win_is_valid(win) and not vim.api.nvim_win_get_config(win).hide then
-        vim.api.nvim_win_set_config(win, { width = vim.o.columns, border = { "", "─", "", "", "", "", "", "" } })
-        vim.wo[win].winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator,Search:,CurSearch:,IncSearch:"
-    end
-end
+-- Messages: bottom-right box on the editor background, border (from winborder) in the <leader>ff outline color
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "msg",
+    callback = function()
+        vim.wo.winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator,Search:,CurSearch:,IncSearch:"
+    end,
+})
+require("vim._core.ui2").enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
 vim.opt.cmdheight = 0
 
 -- Indentation

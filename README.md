@@ -73,7 +73,7 @@ snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to l
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
 ~ snacks.nvim for the picker, explorer, terminal, lazygit, dashboard, smooth scroll and indent guides\
-~ the picker sits on the last line like `:find`, up to three results above a prompt. it shrinks to fit fewer\
+~ the picker sits on the last line like `:find`, its height fits the number of results\
 ~ the explorer's rename, add, copy and delete prompts use that same bottom bar\
 ~ blink.cmp with luasnip and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
