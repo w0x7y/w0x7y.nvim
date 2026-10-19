@@ -597,7 +597,6 @@ return {
 					},
 				},
 			},
-			lazygit = { enabled = true },
 			quickfile = { enabled = true }, -- Instantly loads file text before heavy extensions run
 			animate = { enabled = true },
 			scroll = { enabled = true },
@@ -754,24 +753,6 @@ return {
 					require("snacks").explorer()
 				end,
 				desc = "Toggle file explorer",
-			},
-
-			-- Shortcut to open the floating LazyGit window (<leader>gg)
-			{
-				"<leader>gg",
-				function()
-					require("snacks").lazygit()
-				end,
-				desc = "LazyGit",
-			},
-
-			-- Shortcut to open LazyGit history for the current file (<leader>gf)
-			{
-				"<leader>gf",
-				function()
-					require("snacks").lazygit.log_file()
-				end,
-				desc = "LazyGit Current File History",
 			},
 		},
 	},

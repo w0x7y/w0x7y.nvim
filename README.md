@@ -20,7 +20,7 @@ my neovim config. one `init.lua`, one plugin file, [rime](https://github.com/w0x
 needs neovim `0.12`+, git and a nerd font
 
 ```sh
-git clone https://github.com/w0x7y/Neovim.config ~/.config/nvim
+git clone https://github.com/w0x7y/w0x7y.nvim ~/.config/nvim
 nvim
 ```
 
@@ -36,7 +36,6 @@ mason then installs the language servers and formatters
 |---|---|
 | `fd` | `<leader>ff` |
 | `rg` | `<leader>fg` |
-| `lazygit` | `<leader>gg`, `<leader>gf` |
 | `tree-sitter` cli and a c compiler | building parsers |
 | `revo` | the revo lsp, from `$PATH` or `~/.local/bin/revo` |
 | a python venv in `~/.local/share/better-sql-venv` | better-sql.nvim |
@@ -54,8 +53,6 @@ leader is `<space>`
 | `<leader>fb` | buffers |
 | `<leader>fk` | search every keymap |
 | `<leader>e` | file explorer |
-| `<leader>gg` | lazygit |
-| `<leader>gf` | lazygit history of the current file |
 | `<leader>jf` | format the file or selection |
 | `s` | flash jump |
 | `S` | flash select a treesitter node |
@@ -71,7 +68,7 @@ snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to l
 ### what's in it
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
-~ snacks.nvim for the picker, explorer, lazygit, dashboard, smooth scroll and indent guides\
+~ snacks.nvim for the picker, explorer, dashboard, smooth scroll and indent guides\
 ~ the picker sits on the last line like `:find`, its height fits the number of results\
 ~ every prompt uses that same bottom bar: lsp rename, code actions, and the explorer's rename, add, copy and delete\
 ~ blink.cmp with luasnip and friendly-snippets\
