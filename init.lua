@@ -6,17 +6,6 @@ vim.keymap.set("n", "<leader>t", function()
     Snacks.terminal.toggle()
 end, { desc = "Toggle Terminal" })
 
--- :? opens which-key with the leader keymaps (<BS> in the popup shows all keymaps)
-vim.keymap.set("c", "<CR>", function()
-    if vim.fn.getcmdtype() == ":" and vim.fn.getcmdline() == "?" then
-        vim.schedule(function()
-            require("which-key").show({ keys = "<leader>" })
-        end)
-        return "<C-c>" -- <Esc> would run the command when sent from a mapping
-    end
-    return "<CR>"
-end, { expr = true, desc = "Run command, or show keymaps on :?" })
-
 -- <leader>fc fuzzy-finds files in the real command line (:find + fd)
 local find_files
 function _G.FindFiles(arg)
@@ -71,15 +60,19 @@ vim.diagnostic.config({
 
 -- Experimental 0.12 message/cmdline UI: messages in floats, no "Press ENTER" prompts
 -- cmdheight 0: the command line only shows while you type, messages fade after the timeout
--- Messages as bare text above lualine: no border, editor background
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "msg",
-    callback = function()
-        vim.api.nvim_win_set_config(0, { border = "none" })
-        vim.wo.winhighlight = "NormalFloat:Normal,Search:,CurSearch:,IncSearch:"
-    end,
-})
-require("vim._core.ui2").enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
+local ui2 = require("vim._core.ui2")
+ui2.enable({ msg = { targets = "msg", msg = { timeout = 4000 } } })
+-- Messages span the full width above lualine, with the <leader>ff top outline.
+-- ui2 resizes the window on every message, so reapply after each reposition.
+local set_pos = ui2.msg.set_pos
+ui2.msg.set_pos = function(tgt)
+    set_pos(tgt)
+    local win = ui2.wins.msg
+    if vim.api.nvim_win_is_valid(win) and not vim.api.nvim_win_get_config(win).hide then
+        vim.api.nvim_win_set_config(win, { width = vim.o.columns, border = { "", "─", "", "", "", "", "", "" } })
+        vim.wo[win].winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator,Search:,CurSearch:,IncSearch:"
+    end
+end
 vim.opt.cmdheight = 0
 
 -- Indentation

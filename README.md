@@ -46,8 +46,7 @@ mason then installs the language servers and formatters
 
 ### keys
 
-leader is `<space>`\
-which-key never pops up by itself. type `:?` to list every leader key
+leader is `<space>`
 
 | key | does |
 |---|---|

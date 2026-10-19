@@ -93,37 +93,6 @@ return {
 			},
 		},
 	},
-	-- Which-key: popup of available keybindings
-	{
-		"folke/which-key.nvim",
-		event = "VeryLazy",
-		opts = {
-			preset = "helix", -- compact single-column panel, bottom-right
-			-- No popup while typing; open it on demand with :? (see init.lua)
-			triggers = {},
-			spec = {
-				{ "<leader>f", group = "Find" },
-				{ "<leader>g", group = "Git" },
-				{ "<leader>j", group = "Format" },
-			},
-		},
-		config = function(_, opts)
-			require("which-key").setup(opts)
-
-			-- Drop the lighter float background so the popup blends with the editor
-			local function clear_bg()
-				local base =
-					{ WhichKeyNormal = "NormalFloat", WhichKeyBorder = "FloatBorder", WhichKeyTitle = "FloatTitle" }
-				for group, from in pairs(base) do
-					local hl = vim.api.nvim_get_hl(0, { name = from, link = false })
-					hl.bg = nil
-					vim.api.nvim_set_hl(0, group, hl)
-				end
-			end
-			clear_bg()
-			vim.api.nvim_create_autocmd("ColorScheme", { callback = clear_bg })
-		end,
-	},
 
 	-- Render markdown
 	{
