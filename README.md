@@ -67,13 +67,15 @@ which-key never pops up by itself. type `:?` to list every leader key
 the other lsp keys are neovim's own: `grn` rename, `gra` code action, `grr` references, `gri` implementation, `gO` symbols, `K` hover
 
 in completion, `<Tab>` and `<S-Tab>` move through items and snippet fields\
-`<CR>` only confirms an item you picked, `<C-space>` shows its docs
+`<CR>` only confirms an item you picked, `<C-space>` shows its docs\
+snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to list only snippets. the backtick goes away when one expands
 
 ### what's in it
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
 ~ snacks.nvim for the picker, explorer, terminal, lazygit, dashboard, smooth scroll and indent guides\
 ~ the picker sits on the last line like `:find`, three results above a prompt\
+~ the explorer's rename, add, copy and delete prompts use that same bottom bar\
 ~ blink.cmp with luasnip and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
 ~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier, all at 4 spaces\

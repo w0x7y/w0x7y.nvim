@@ -261,6 +261,44 @@ return {
 
 			signature = { enabled = false },
 
+			-- Snippets only show after a backtick (`for); the normal menu has none
+			sources = {
+				default = function()
+					local col = vim.api.nvim_win_get_cursor(0)[2]
+					local after_backtick = vim.api.nvim_get_current_line():sub(1, col):find("`[^%s`]*$")
+					return after_backtick and { "snippets" } or { "lsp", "path", "buffer" }
+				end,
+				providers = {
+					lsp = {
+						transform_items = function(_, items)
+							local snippet = require("blink.cmp.types").CompletionItemKind.Snippet
+							return vim.tbl_filter(function(item)
+								return item.kind ~= snippet
+							end, items)
+						end,
+					},
+					snippets = {
+						override = {
+							-- Expand, then delete the backtick in front of the snippet
+							execute = function(source, ctx, item, callback, default)
+								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+								local line = vim.api.nvim_get_current_line()
+								local tick = line:sub(1, col):find("`[^%s`]*$")
+								if tick and line:sub(col + 1, col + 1) == "`" then
+									-- the closing backtick nvim-autopairs added
+									vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, {})
+								end
+								source:execute(ctx, item, function() end, default)
+								if tick then
+									vim.api.nvim_buf_set_text(0, row - 1, tick - 1, row - 1, tick, {})
+								end
+								callback()
+							end,
+						},
+					},
+				},
+			},
+
 			-- Show matches as you type :find (the <leader>fc file search)
 			cmdline = {
 				completion = {
@@ -614,6 +652,53 @@ return {
 				},
 			},
 		},
+		config = function(_, opts)
+			local Snacks = require("snacks")
+			Snacks.setup(opts)
+
+			-- Explorer rename/add/copy prompt on the bottom line, like <leader>ff
+			local input = Snacks.input.input
+			local function cmdline_input(o, on_confirm)
+				local explorer = Snacks.picker.get({ source = "explorer" })[1]
+				if not (explorer and explorer.list.win.win == vim.api.nvim_get_current_win()) then
+					return input(o, on_confirm)
+				end
+				-- Snacks' prompts are "New File Name", "Add a new file ..." and "Copy to"
+				local prompt = ({ New = ":rename ", Add = ":new ", Copy = ":copy " })[(o.prompt or ""):match("%a+")]
+					or o.prompt
+					or ""
+				local win = input(
+					vim.tbl_extend("force", o, {
+						icon = "",
+						prompt_pos = false,
+						expand = false,
+						win = {
+							row = vim.o.lines - vim.o.cmdheight - 2, -- over lualine, where <leader>ff types
+							col = 0,
+							width = 0,
+							border = "top",
+							wo = { winhighlight = "NormalFloat:Normal,FloatBorder:WinSeparator" },
+						},
+					}),
+					on_confirm
+				)
+				vim.wo[win.win].statuscolumn = "%#SnacksPickerPrompt#" .. prompt:gsub("%%", "%%%%") .. "%*"
+				return win
+			end
+			Snacks.input.input = cmdline_input
+			vim.ui.input = cmdline_input
+
+			-- Delete/move confirmations in the same place
+			Snacks.picker.util.confirm = function(prompt, fn)
+				Snacks.picker.select({ "No", "Yes" }, {
+					snacks = { prompt = prompt .. " ", layout = { preset = "cmdline", layout = { height = 3 } } }, -- Yes + No + prompt
+				}, function(_, idx)
+					if idx == 2 then
+						fn()
+					end
+				end)
+			end
+		end,
 		keys = {
 			-- Finder
 			{
