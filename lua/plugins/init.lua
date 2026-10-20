@@ -577,14 +577,6 @@ return {
 		lazy = false,
 		---@type snacks.Config
 		opts = {
-			image = {
-				doc = {
-					inline = false, -- show it in a popup next to the cursor instead of in the buffer
-					max_width = 10, -- make the preview smaller (defaults are 80 x 40)
-					max_height = 10,
-				},
-			},
-
 			dashboard = {
 				enabled = true,
 				sections = {
