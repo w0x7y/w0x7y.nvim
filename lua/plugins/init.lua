@@ -256,12 +256,12 @@ return {
 
 			signature = { enabled = false },
 
-			-- Snippets only show after a backtick (`for); the normal menu has none
+			-- Snippets only show after an @ (@for); the normal menu has none
 			sources = {
 				default = function()
 					local col = vim.api.nvim_win_get_cursor(0)[2]
-					local after_backtick = vim.api.nvim_get_current_line():sub(1, col):find("`[^%s`]*$")
-					return after_backtick and { "snippets" } or { "lsp", "path", "buffer" }
+					local after_at = vim.api.nvim_get_current_line():sub(1, col):find("@[^%s@]*$")
+					return after_at and { "snippets" } or { "lsp", "path", "buffer" }
 				end,
 				providers = {
 					lsp = {
@@ -274,18 +274,13 @@ return {
 					},
 					snippets = {
 						override = {
-							-- Expand, then delete the backtick in front of the snippet
+							-- Expand, then delete the @ in front of the snippet
 							execute = function(source, ctx, item, callback, default)
 								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-								local line = vim.api.nvim_get_current_line()
-								local tick = line:sub(1, col):find("`[^%s`]*$")
-								if tick and line:sub(col + 1, col + 1) == "`" then
-									-- the closing backtick nvim-autopairs added
-									vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, {})
-								end
+								local at = vim.api.nvim_get_current_line():sub(1, col):find("@[^%s@]*$")
 								source:execute(ctx, item, function() end, default)
-								if tick then
-									vim.api.nvim_buf_set_text(0, row - 1, tick - 1, row - 1, tick, {})
+								if at then
+									vim.api.nvim_buf_set_text(0, row - 1, at - 1, row - 1, at, {})
 								end
 								callback()
 							end,
@@ -651,6 +646,11 @@ return {
 			words = { enabled = true }, -- Highlights matching variables under cursor
 			input = { enabled = true }, -- Nicer vim.ui.input (LSP rename prompt)
 			explorer = { enabled = true }, -- File explorer, also opens on `nvim <dir>`
+			-- Show image files (and markdown images) through kitty's graphics protocol
+			image = {
+				enabled = true,
+				doc = { max_width = 40, max_height = 15 }, -- markdown images, in cells
+			},
 
 			-- Fuzzy finder; also styles vim.ui.select (code actions)
 			picker = {
@@ -717,6 +717,21 @@ return {
 		config = function(_, opts)
 			local Snacks = require("snacks")
 			Snacks.setup(opts)
+
+			-- Leaving an image file hides its picture, and snacks never un-hides it, so it came back blank
+			local Placement = require("snacks.image.placement")
+			local update = Placement.update
+			Placement.update = function(self)
+				if
+					self.hidden
+					and vim.api.nvim_buf_is_valid(self.buf)
+					and vim.bo[self.buf].filetype == "image"
+					and #self:wins() > 0
+				then
+					self.hidden = false
+				end
+				return update(self)
+			end
 
 			-- Every vim.ui.input prompt (LSP rename, explorer rename/add/copy) on the bottom line, like <leader>ff
 			local input = Snacks.input.input

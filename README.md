@@ -39,6 +39,8 @@ mason then installs the language servers and formatters
 | `tree-sitter` cli and a c compiler | building parsers |
 | `revo` | the revo lsp, from `$PATH` or `~/.local/bin/revo` |
 | a python venv in `~/.local/share/better-sql-venv` | better-sql.nvim |
+| kitty, wezterm or ghostty | showing images |
+| `magick` | images that aren't png |
 
 </details>
 
@@ -63,12 +65,13 @@ the other lsp keys are neovim's own: `grn` rename, `gra` code action, `gri` impl
 
 in completion, `<Tab>` and `<S-Tab>` move through items and snippet fields\
 `<CR>` only confirms an item you picked, `<C-space>` shows its docs\
-snippets stay out of the menu. type `` ` `` before a word, like `` `for ``, to list only snippets. the backtick goes away when one expands
+snippets stay out of the menu. type `@` before a word, like `@for`, to list only snippets. the `@` goes away when one expands
 
 ### what's in it
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
-~ snacks.nvim for the picker, explorer, dashboard, smooth scroll and indent guides\
+~ snacks.nvim for the picker, explorer, dashboard, images, smooth scroll and indent guides\
+~ image files open as the picture, and markdown images show inline at up to 40x15 cells\
 ~ the picker sits on the last line like `:find`, its height fits the number of results\
 ~ every prompt uses that same bottom bar: lsp rename, code actions, and the explorer's rename, add, copy and delete\
 ~ blink.cmp with luasnip and friendly-snippets\
