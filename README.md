@@ -3,7 +3,7 @@
 my neovim config. one `init.lua`, one plugin file, [rime](https://github.com/w0x7y/rime) colors and [revo](https://github.com/if-not-nil/revo) support
 
 <p align="center">
-<img width="49%" alt="snacks dashboard" src="1.png" />
+<img width="49%" alt="the rime snowflake dashboard" src="1.png" />
 <img width="49%" alt="editing lua in rime" src="2.png" />
 </p>
 
