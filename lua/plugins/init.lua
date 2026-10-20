@@ -585,7 +585,37 @@ return {
 				},
 			},
 
-			dashboard = { enabled = true },
+			dashboard = {
+				enabled = true,
+				sections = {
+					{ text = { "cold", hl = "Title" }, align = "center", padding = 1 },
+					{
+						align = "center",
+						-- Rime's icon snowflake in braille, colored per arm: Directory blue, Special cyan, Define violet
+						text = {
+							{ "               ⣾⣶⣿⣿⣶⣷               \n", hl = "Directory" },
+							{ "              ⣀⡈⠻⣿⣿⠟⢁⣀              \n", hl = "Directory" },
+							{ "              ⢻⣿⣦⣿⣿⣴⣿⡟              \n", hl = "Directory" },
+							{ "   ⣀⡀          ", hl = "Special" }, { "⠙⢿⣿⣿⡿⠋          ", hl = "Directory" }, { "⢀⣀   \n", hl = "Define" },
+							{ " ⣤⣼⣿⣷ ⣿⣷⡀        ", hl = "Special" }, { "⣿⣿        ", hl = "Directory" }, { "⢀⣾⣿ ⣾⣿⣧⣤ \n", hl = "Define" },
+							{ "⢀⣽⣿⣿⣿⣧⣼⣿⣧        ", hl = "Special" }, { "⣿⣿        ", hl = "Directory" }, { "⣼⣿⣧⣼⣿⣿⣿⣯⡀\n", hl = "Define" },
+							{ "⠈⠛⠉⣉⣉⣿⣿⣿⣿⣦⣀      ", hl = "Special" }, { "⣿⣿      ", hl = "Directory" }, { "⣀⣴⣿⣿⣿⣿⣉⣉⠉⠛⠁\n", hl = "Define" },
+							{ "  ⠈⠿⠟⠛⠛⠋⠙⠻⢿⣷⣦⣄⡀  ", hl = "Special" }, { "⣿⣿  ", hl = "Directory" }, { "⢀⣠⣴⣾⡿⠟⠋⠙⠛⠛⠻⠿⠁  \n", hl = "Define" },
+							{ "           ⠈⠛⠿⣿⣶", hl = "Special" }, { "⣤⣿⣿⣤", hl = "Normal" }, { "⣶⣿⠿⠛⠁           \n", hl = "Define" },
+							{ "               ⣹", hl = "Special" }, { "⣿⣿⣿⣿", hl = "Normal" }, { "⣏               \n", hl = "Define" },
+							{ "           ⢀⣤⣶⣿⠿", hl = "Define" }, { "⠛⣿⣿⠛", hl = "Normal" }, { "⠿⣿⣶⣤⡀           \n", hl = "Special" },
+							{ "  ⢀⣶⣦⣤⣤⣄⣠⣴⣾⡿⠟⠋⠁  ", hl = "Define" }, { "⣿⣿  ", hl = "Directory" }, { "⠈⠙⠻⢿⣷⣦⣄⣠⣤⣤⣴⣶⡀  \n", hl = "Special" },
+							{ "⢀⣤⣀⣉⣉⣿⣿⣿⣿⠟⠉      ", hl = "Define" }, { "⣿⣿      ", hl = "Directory" }, { "⠉⠻⣿⣿⣿⣿⣉⣉⣀⣤⡀\n", hl = "Special" },
+							{ "⠈⣻⣿⣿⣿⡟⢻⣿⡟        ", hl = "Define" }, { "⣿⣿        ", hl = "Directory" }, { "⢻⣿⡟⢻⣿⣿⣿⣟⠁\n", hl = "Special" },
+							{ " ⠛⢻⣿⡿ ⣿⡿⠁        ", hl = "Define" }, { "⣿⣿        ", hl = "Directory" }, { "⠈⢿⣿ ⢿⣿⡟⠛ \n", hl = "Special" },
+							{ "   ⠉⠁          ", hl = "Define" }, { "⣠⣾⣿⣿⣷⣄          ", hl = "Directory" }, { "⠈⠉   \n", hl = "Special" },
+							{ "              ⣼⣿⠟⣿⣿⠻⣿⣧              \n", hl = "Directory" },
+							{ "              ⠉⢁⣴⣿⣿⣦⡈⠉              \n", hl = "Directory" },
+							{ "               ⢿⠿⣿⣿⠿⡿               ", hl = "Directory" },
+						},
+					},
+				},
+			},
 			indent = {
 				animate = {
 					enabled = vim.fn.has("nvim-0.10") == 1,
