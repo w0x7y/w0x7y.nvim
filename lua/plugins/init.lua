@@ -274,13 +274,18 @@ return {
 					},
 					snippets = {
 						override = {
-							-- Expand, then delete the @ in front of the snippet
+							-- Clear "@trigger" as part of the expansion. Deleting the @ afterwards
+							-- shifts the text left and the placeholder selection lands one char off
 							execute = function(source, ctx, item, callback, default)
 								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 								local at = vim.api.nvim_get_current_line():sub(1, col):find("@[^%s@]*$")
-								source:execute(ctx, item, function() end, default)
 								if at then
-									vim.api.nvim_buf_set_text(0, row - 1, at - 1, row - 1, at, {})
+									local luasnip = require("luasnip")
+									luasnip.snip_expand(luasnip.get_id_snippet(item.data.snip_id), {
+										clear_region = { from = { row - 1, at - 1 }, to = { row - 1, col } },
+									})
+								else
+									source:execute(ctx, item, function() end, default)
 								end
 								callback()
 							end,
