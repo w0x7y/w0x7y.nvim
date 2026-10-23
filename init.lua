@@ -18,16 +18,16 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- Basic settings
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.termguicolors = true
-vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.updatetime = 250
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "number" -- git/diagnostic signs replace the line number, no extra gutter
+vim.opt.numberwidth = 1 -- number column only as wide as the line count needs
 vim.opt.undofile = true -- undo history survives closing the file
 vim.opt.scrolloff = 8
 vim.opt.inccommand = "split" -- live preview of :%s/foo/bar
 vim.opt.confirm = true -- :q on a modified buffer asks instead of erroring
 vim.opt.cursorline = true
+vim.opt.colorcolumn = "80"
 vim.opt.showmode = false -- lualine shows the mode
 
 -- Looks
@@ -40,36 +40,51 @@ vim.diagnostic.config({
 })
 
 -- Experimental 0.12 message/cmdline UI: no "Press ENTER" prompts
-local ui2 = require("vim._core.ui2")
-ui2.enable({})
-vim.opt.cmdheight = 0
+require("vim._core.ui2").enable({})
 
--- The command bar is hidden. A command or message brings it up, and it hides
--- again after 2 seconds without a new one.
-local hide_bar = vim.uv.new_timer()
-local function show_bar()
-	if ui2.cmdheight == 0 then
-		pcall(function() -- resizing windows isn't allowed in every context
-			vim.o.cmdheight = 1
-		end)
-	end
-	hide_bar:start(
-		2000,
-		0,
-		vim.schedule_wrap(function()
-			if vim.fn.mode() == "c" then
-				return show_bar() -- still typing a command
-			end
-			vim.o.cmdheight = 0
-		end)
-	)
+-- : commands get a fuzzy menu as you type; nothing is preselected, so <CR> runs what you typed
+vim.opt.wildmode = "noselect:lastused,full"
+vim.opt.wildoptions = "pum,fuzzy"
+vim.api.nvim_create_autocmd("CmdlineChanged", {
+	pattern = ":",
+	callback = function()
+		vim.fn.wildtrigger()
+	end,
+})
+
+-- :find fuzzy-matches every file in the project (fd skips gitignored files)
+local files
+vim.api.nvim_create_autocmd("CmdlineEnter", {
+	callback = function()
+		files = nil -- list files once per command line, not on every keystroke
+	end,
+})
+function _G.Find(arg)
+	files = files or vim.fn.systemlist({ "fd", "--type", "f", "-E", "node_modules", "-E", "bin", "-E", "obj" })
+	return arg == "" and files or vim.fn.matchfuzzy(files, arg)
 end
-local msg_show = ui2.msg.msg_show
-ui2.msg.msg_show = function(...)
-	show_bar()
-	return msg_show(...)
-end
-vim.api.nvim_create_autocmd("CmdlineLeave", { callback = show_bar })
+vim.opt.findfunc = "v:lua.Find"
+
+-- :grep fills the quickfix list and opens it, one line per match up to 10 lines
+vim.opt.grepprg = "rg --line-number --column --no-heading --smart-case --glob=!node_modules --glob=!bin --glob=!obj" -- one entry per matching line
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+	pattern = "[^l]*",
+	callback = function()
+		vim.cmd.cwindow()
+		local win = vim.fn.getqflist({ winid = 0 }).winid
+		if win ~= 0 then -- cwindow leaves an already open window at its old height
+			vim.api.nvim_win_set_height(win, math.min(#vim.fn.getqflist(), 10))
+		end
+	end,
+})
+
+-- Finder
+vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find files" })
+vim.keymap.set("n", "<leader>fg", ":silent grep ", { desc = "Grep" }) -- silent: don't print rg's raw output over the editor
+vim.keymap.set("n", "<leader>fb", ":buffer ", { desc = "Find buffers" })
+vim.keymap.set("n", "<leader>fk", "<cmd>map<CR>", { desc = "List keymaps" })
+vim.keymap.set("n", "<leader>fd", vim.diagnostic.setqflist, { desc = "List diagnostics" })
+vim.keymap.set("n", "<leader>e", "<cmd>Explore<CR>", { desc = "File explorer (netrw)" })
 
 -- Indentation
 vim.opt.tabstop = 4

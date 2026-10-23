@@ -46,25 +46,6 @@ vim.api.nvim_create_autocmd("User", {
 	callback = register_parser,
 })
 register_parser()
-vim.treesitter.language.register("revo", "revo")
-
-vim.api.nvim_create_autocmd("FileType", {
-	group = group,
-	pattern = "revo",
-	callback = function(event)
-		vim.bo[event.buf].commentstring = "# %s"
-		vim.bo[event.buf].comments = ":#"
-		vim.bo[event.buf].shiftwidth = 2
-		vim.bo[event.buf].tabstop = 2
-		vim.bo[event.buf].softtabstop = 2
-		vim.bo[event.buf].expandtab = true
-		-- LSP remains usable while the parser is being installed or rebuilt.
-		local ok, err = pcall(vim.treesitter.start, event.buf, "revo")
-		if not ok then
-			vim.notify("Revo highlighting unavailable: " .. tostring(err), vim.log.levels.WARN)
-		end
-	end,
-})
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = group,
