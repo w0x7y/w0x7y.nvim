@@ -246,7 +246,7 @@ return {
 					cs = { "csharpier" },
 					c = { "clang-format" },
 					cpp = { "clang-format" },
-					python = { "black" },
+					python = { "ruff_format" },
 					rust = { "rustfmt" },
 					html = { "prettier" },
 					css = { "prettier" },
@@ -268,6 +268,9 @@ return {
 					prettier = { prepend_args = { "--tab-width", "2" } },
 					stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" } },
 					rustfmt = { prepend_args = { "--config", "tab_spaces=2" } },
+					ruff_format = { append_args = { "--config", "indent-width=2" } },
+					-- csharpier only reads indent size from a config file
+					csharpier = { append_args = { "--config-path", vim.fn.stdpath("config") .. "/csharpier.json" } },
 				},
 
 				-- Format automatically on save

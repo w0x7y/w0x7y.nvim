@@ -99,6 +99,11 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.smartindent = true
+-- Stop the built-in ftplugins from switching these filetypes to 4 spaces or tabs
+vim.g.python_recommended_style = 0
+vim.g.rust_recommended_style = 0
+vim.g.markdown_recommended_style = 0
+vim.g.go_recommended_style = 0
 
 -- Search
 vim.opt.ignorecase = true

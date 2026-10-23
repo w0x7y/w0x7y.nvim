@@ -41,9 +41,9 @@ mason then installs the language servers
 | a python venv in `~/.local/share/better-sql-venv` | better-sql.nvim |
 | kitty, wezterm or ghostty | showing images |
 | `magick` | images that aren't png |
-| `stylua`, `black`, `prettier`, `clang-format`, `rustfmt`, `csharpier` | formatting on save |
+| `stylua`, `ruff`, `prettier`, `clang-format`, `rustfmt`, `csharpier` | formatting on save |
 
-on arch: `pacman -S stylua python-black prettier clang`, `rustfmt` comes with rust, and `dotnet tool install -g csharpier` with `~/.dotnet/tools` on your `PATH`
+on arch: `pacman -S stylua ruff prettier clang`, `rustfmt` comes with rust, and `dotnet tool install -g csharpier` with `~/.dotnet/tools` on your `PATH`
 
 </details>
 
@@ -81,7 +81,8 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ~ git and diagnostic signs replace the line number instead of taking their own column\
 ~ blink.cmp with its own snippet engine and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
-~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier. stylua, clang-format, rustfmt and prettier indent 2 spaces, black and csharpier keep their 4\
+~ conform formats on save with stylua, csharpier, clang-format, ruff, rustfmt and prettier, all at 2 spaces. csharpier gets its indent from `csharpier.json`\
+~ `<Tab>` and `>>` indent 2 spaces in every filetype. python, rust, markdown and go don't switch to their own style\
 ~ diagnostics show in full under the cursor's line and nowhere else\
 ~ neovim 0.12's new message ui, so no "press ENTER" prompts\
 ~ lualine shows `recording @q` while a macro records\
@@ -105,6 +106,7 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 
 ```text
 init.lua              options, keymaps, lazy bootstrap
+csharpier.json        csharpier's 2 space indent
 lua/plugins/init.lua  every plugin except the colorscheme
 lua/plugins/rime.lua  colorscheme
 lua/revo.lua          revo filetype, lsp and parser
