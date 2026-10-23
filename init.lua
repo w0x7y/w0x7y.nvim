@@ -84,7 +84,15 @@ vim.keymap.set("n", "<leader>fg", ":silent grep ", { desc = "Grep" }) -- silent:
 vim.keymap.set("n", "<leader>fb", ":buffer ", { desc = "Find buffers" })
 vim.keymap.set("n", "<leader>fk", "<cmd>map<CR>", { desc = "List keymaps" })
 vim.keymap.set("n", "<leader>fd", vim.diagnostic.setqflist, { desc = "List diagnostics" })
-vim.keymap.set("n", "<leader>e", "<cmd>Explore<CR>", { desc = "File explorer (netrw)" })
+vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>", { desc = "Toggle file explorer sidebar (netrw)" })
+vim.g.netrw_banner = 0 -- no help header; I shows it again
+vim.g.netrw_liststyle = 3 -- tree view
+vim.g.netrw_winsize = -30 -- negative: sidebar width in columns, not percent
+vim.g.Netrw_funcref = function() -- runs after netrw opens a file
+	if vim.t.netrw_lexbufnr then
+		vim.cmd("Lexplore") -- picked from the sidebar: close it
+	end
+end
 
 -- Indentation
 vim.opt.tabstop = 4

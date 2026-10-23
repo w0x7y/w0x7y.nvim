@@ -55,7 +55,7 @@ leader is `<space>`
 | `<leader>fb` | buffers, `:buffer` with a fuzzy menu |
 | `<leader>fk` | list every keymap |
 | `<leader>fd` | every diagnostic, in the quickfix list |
-| `<leader>e` | file explorer (netrw) |
+| `<leader>e` | toggle the file explorer sidebar (netrw) |
 | `<leader>jf` | format the file or selection |
 | `s` | flash jump |
 | `S` | flash select a treesitter node |
@@ -73,6 +73,7 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ~ snacks.nvim for the dashboard, images, indent guides and highlighting other uses of the word under the cursor\
 ~ image files open as the picture, and markdown images show inline at up to 40x15 cells\
 ~ no picker plugin. `:` commands get a fuzzy menu as you type, and `:find` lists files with `fd`\
+~ no file tree plugin. `<leader>e` opens netrw as a 30 column tree on the left, and picking a file closes it\
 ~ `<leader>fg` runs `rg` and opens the matches in a quickfix window that fits them, up to 10 lines. `]q` and `[q` step through\
 ~ git and diagnostic signs replace the line number instead of taking their own column\
 ~ blink.cmp with its own snippet engine and friendly-snippets\
