@@ -5,7 +5,7 @@ return {
 		main = "revofmt",
 		lazy = false,
 		opts = {
-			indent_width = 4, -- 1 to 8 spaces
+			indent_width = 2, -- 1 to 8 spaces
 			line_width = 80, -- 20 to 240 columns; a soft target
 			format_on_save = true,
 		},
@@ -283,9 +283,11 @@ return {
 
 				formatters = {
 					["clang-format"] = {
-						prepend_args = { "--style={BasedOnStyle: LLVM, IndentWidth: 4, TabWidth: 4, UseTab: Never}" },
+						prepend_args = { "--style={BasedOnStyle: LLVM, IndentWidth: 2, TabWidth: 2, UseTab: Never}" },
 					},
-					prettier = { prepend_args = { "--tab-width", "4" } },
+					prettier = { prepend_args = { "--tab-width", "2" } },
+					stylua = { prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" } },
+					rustfmt = { prepend_args = { "--config", "tab_spaces=2" } },
 				},
 
 				-- Format automatically on save

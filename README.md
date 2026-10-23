@@ -78,7 +78,7 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ~ git and diagnostic signs replace the line number instead of taking their own column\
 ~ blink.cmp with its own snippet engine and friendly-snippets\
 ~ mason installs clangd, omnisharp, lua_ls, pyright, rust_analyzer, html, cssls, ts_ls, eslint and jsonls\
-~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier, all at 4 spaces\
+~ conform formats on save with stylua, csharpier, clang-format, black, rustfmt and prettier. stylua, clang-format, rustfmt and prettier indent 2 spaces, black and csharpier keep their 4\
 ~ diagnostics show in full under the cursor's line and nowhere else\
 ~ neovim 0.12's new message ui, so no "press ENTER" prompts\
 ~ lualine shows `recording @q` while a macro records\

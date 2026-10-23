@@ -95,8 +95,8 @@ vim.g.Netrw_funcref = function() -- runs after netrw opens a file
 end
 
 -- Indentation
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.smartindent = true
 
