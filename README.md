@@ -25,7 +25,7 @@ nvim
 ```
 
 lazy.nvim installs itself and every plugin on first start\
-mason then installs the language servers and formatters
+mason then installs the language servers
 
 <details>
 <summary>~ other programs it calls</summary>
@@ -41,6 +41,9 @@ mason then installs the language servers and formatters
 | a python venv in `~/.local/share/better-sql-venv` | better-sql.nvim |
 | kitty, wezterm or ghostty | showing images |
 | `magick` | images that aren't png |
+| `stylua`, `black`, `prettier`, `clang-format`, `rustfmt`, `csharpier` | formatting on save |
+
+on arch: `pacman -S stylua python-black prettier clang`, `rustfmt` comes with rust, and `dotnet tool install -g csharpier` with `~/.dotnet/tools` on your `PATH`
 
 </details>
 

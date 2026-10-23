@@ -121,26 +121,6 @@ return {
 		opts = {},
 	},
 
-	-- Automatically install LSPs + formatters
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		event = "VeryLazy", -- checks installs after the UI is up
-		dependencies = {
-			"williamboman/mason.nvim",
-		},
-		opts = {
-			-- LSPs are installed by mason-lspconfig below
-			ensure_installed = {
-				-- Formatters
-				"stylua",
-				"csharpier",
-				"clang-format",
-				"black",
-				"prettier",
-			},
-		},
-	},
-
 	-- Auto-completion (also sets LSP completion capabilities for every server)
 	{
 		"saghen/blink.cmp",
