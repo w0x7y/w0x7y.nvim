@@ -55,7 +55,7 @@ vim.keymap.set("n", "<leader>e", "<cmd>Lexplore<CR>", { desc = "Toggle file expl
 -- netrw as a tree sidebar
 vim.g.netrw_banner = 0 -- no help header; I shows it again
 vim.g.netrw_liststyle = 3 -- tree view
-vim.g.netrw_winsize = -30 -- negative: sidebar width in columns, not percent
+vim.g.netrw_winsize = -22 -- negative: sidebar width in columns, not percent
 vim.g.Netrw_funcref = function() -- runs after netrw opens a file
 	if vim.t.netrw_lexbufnr then
 		vim.cmd("Lexplore") -- picked from the sidebar: close it

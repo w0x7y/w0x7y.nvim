@@ -9,13 +9,13 @@ type Report = {:ok, string} | {:err, atom}
 #* one word for how cold it is, coldest first *#
 fn describe(degrees: number) -> string do
   match degrees
-  | d when d <= -30 => "deadly"
-  | d when d <= -10 => "biting"
-  | d when d < 0 => "frosty"
-  | _ => "thawing"
+    | d when d <= -30 => "deadly"
+    | d when d <= -10 => "biting"
+    | d when d < 0 => "frosty"
+    | _ => "thawing"
 end
 
-fn average(xs: table<number>) -> {:ok, number} | {:err, atom} do
+fn average(xs: table) -> {:ok, number} | {:err, atom} do
   if xs:len() == 0 return {:err, :NoData}
   const sum = iter.reduce(xs, fn(a: number, b: number) a + b, 0)
   {:ok, sum / xs:len()}
@@ -27,8 +27,8 @@ fn report(readings: table) -> Report do
   let offline = 0
   for r in readings do
     match r
-    | {:temp, c} => temps:push(c)
-    | {:offline, _} => offline += 1
+      | {:temp, c} => temps:push(c)
+      | {:offline, _} => offline += 1
   end
 
   const avg = average(temps)?
@@ -41,9 +41,4 @@ test "describe sorts the cold" do
   expect_eq(describe(5), "thawing")?
 end
 
-print(report({
-  {:temp, -12.5},
-  {:temp, 3},
-  {:offline, "north ridge"},
-  {:temp, -31},
-}))
+print(report({{:temp, -12}, {:offline, "ridge"}, {:temp, -31}}))

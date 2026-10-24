@@ -3,8 +3,8 @@
 my neovim config. one file per feature, [rime](https://github.com/w0x7y/rime) colors and [revo](https://github.com/if-not-nil/revo) support
 
 <p align="center">
-<img width="49%" alt="the rime snowflake dashboard" src="assets/1.png" />
-<img width="49%" alt="editing lua in rime" src="assets/2.png" />
+<img width="49%" alt="editing revo in rime, with inlay hints and a diagnostic" src="assets/1.png" />
+<img width="49%" alt="grep results in the quickfix list beside the netrw sidebar" src="assets/2.png" />
 </p>
 
 <p align="center">
@@ -73,10 +73,10 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ### what's in it
 
 ~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/colorscheme.lua`\
-~ snacks.nvim for the dashboard, images, indent guides and highlighting other uses of the word under the cursor\
+~ snacks.nvim for images, indent guides and highlighting other uses of the word under the cursor\
 ~ image files open as the picture, and markdown images show inline at up to 40x15 cells\
 ~ no picker plugin. `:` commands get a fuzzy menu as you type, and `:find` lists files with `fd`\
-~ no file tree plugin. `<leader>e` opens netrw as a 30 column tree on the left, and picking a file closes it\
+~ no file tree plugin. `<leader>e` opens netrw as a 22 column tree on the left, and picking a file closes it\
 ~ `<leader>fg` runs `rg` and opens the matches in a quickfix window that fits them, up to 10 lines. `]q` and `[q` step through\
 ~ git and diagnostic signs replace the line number instead of taking their own column\
 ~ blink.cmp with its own snippet engine and friendly-snippets\
@@ -120,12 +120,11 @@ lua/plugins/formatting.lua  conform and <leader>jf
 lua/plugins/editor.lua      flash, autopairs, ts-autotag, gitsigns
 lua/plugins/ui.lua          lualine, render-markdown
 lua/plugins/snacks.lua      snacks: images, indent guides, words
-lua/plugins/dashboard.lua   the snowflake dashboard, merged into snacks
 lua/plugins/revo.lua        revofmt.nvim
 lua/plugins/sql.lua         better-sql.nvim
 ftplugin/revo.lua           revo comments and highlighting
 snippets/                   revo snippets, loaded by blink.cmp
-assets/                     readme screenshots
+assets/                     readme screenshots and demo.rv, the file they show
 ```
 
 _license: [mit](./LICENSE)_

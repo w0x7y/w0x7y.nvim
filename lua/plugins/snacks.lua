@@ -1,5 +1,5 @@
 return {
-	-- Snacks.nvim (the dashboard is in dashboard.lua)
+	-- Snacks.nvim
 	{
 		"folke/snacks.nvim",
 		priority = 1000,
