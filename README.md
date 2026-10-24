@@ -1,10 +1,10 @@
 # nvim, w0x7y special
 
-my neovim config. one `init.lua`, one plugin file, [rime](https://github.com/w0x7y/rime) colors and [revo](https://github.com/if-not-nil/revo) support
+my neovim config. one file per feature, [rime](https://github.com/w0x7y/rime) colors and [revo](https://github.com/if-not-nil/revo) support
 
 <p align="center">
-<img width="49%" alt="the rime snowflake dashboard" src="1.png" />
-<img width="49%" alt="editing lua in rime" src="2.png" />
+<img width="49%" alt="the rime snowflake dashboard" src="assets/1.png" />
+<img width="49%" alt="editing lua in rime" src="assets/2.png" />
 </p>
 
 <p align="center">
@@ -72,7 +72,7 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 
 ### what's in it
 
-~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/rime.lua`\
+~ [rime](https://github.com/w0x7y/rime) colorscheme, switch variants in `lua/plugins/colorscheme.lua`\
 ~ snacks.nvim for the dashboard, images, indent guides and highlighting other uses of the word under the cursor\
 ~ image files open as the picture, and markdown images show inline at up to 40x15 cells\
 ~ no picker plugin. `:` commands get a fuzzy menu as you type, and `:find` lists files with `fd`\
@@ -91,7 +91,7 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 
 ### revo
 
-`lua/revo.lua` and `ftplugin/revo.lua` set up [revo](https://github.com/if-not-nil/revo) by hand
+`lua/config/revo.lua` and `ftplugin/revo.lua` set up [revo](https://github.com/if-not-nil/revo) by hand
 
 ~ `.rv`, `.revo` and files with a revo shebang get the `revo` filetype\
 ~ `revo lsp` runs as the language server, with inlay hints on\
@@ -100,18 +100,32 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ~ 43 snippets in `snippets/revo.json`, like `fn`, `match`, `test`, `class` and `cli`
 
 > [!TIP]
-> set `vim.g.revo_executable` or `vim.g.revo_grammar_path` before `require("revo")` to use another binary or grammar
+> set `vim.g.revo_executable` or `vim.g.revo_grammar_path` before `require("config.revo")` in `init.lua` to use another binary or grammar
 
 ### layout
 
 ```text
-init.lua              options, keymaps, lazy bootstrap
-csharpier.json        csharpier's 2 space indent
-lua/plugins/init.lua  every plugin except the colorscheme
-lua/plugins/rime.lua  colorscheme
-lua/revo.lua          revo filetype, lsp and parser
-ftplugin/revo.lua     revo indent, comments and highlighting
-snippets/             revo snippets, loaded by blink.cmp
+init.lua                    leader, then loads lua/config/
+csharpier.json              csharpier's 2 space indent
+lua/config/options.lua      options, diagnostics, yank highlight
+lua/config/finder.lua       fuzzy : menu, :find, :grep, netrw and their keys
+lua/config/lsp.lua          gd on every lsp
+lua/config/lazy.lua         lazy.nvim bootstrap
+lua/config/revo.lua         revo filetype, lsp and parser
+lua/plugins/colorscheme.lua rime
+lua/plugins/treesitter.lua  treesitter and its parsers
+lua/plugins/lsp.lua         mason, lspconfig, lazydev
+lua/plugins/completion.lua  blink.cmp and the @ snippet trigger
+lua/plugins/formatting.lua  conform and <leader>jf
+lua/plugins/editor.lua      flash, autopairs, ts-autotag, gitsigns
+lua/plugins/ui.lua          lualine, render-markdown
+lua/plugins/snacks.lua      snacks: images, indent guides, words
+lua/plugins/dashboard.lua   the snowflake dashboard, merged into snacks
+lua/plugins/revo.lua        revofmt.nvim
+lua/plugins/sql.lua         better-sql.nvim
+ftplugin/revo.lua           revo comments and highlighting
+snippets/                   revo snippets, loaded by blink.cmp
+assets/                     readme screenshots
 ```
 
 _license: [mit](./LICENSE)_
