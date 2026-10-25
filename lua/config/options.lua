@@ -10,6 +10,8 @@ vim.opt.scrolloff = 8
 vim.opt.inccommand = "split" -- live preview of :%s/foo/bar
 vim.opt.confirm = true -- :q on a modified buffer asks instead of erroring
 vim.opt.cursorline = true
+-- Neovim's default cursor shapes, but an underline in visual mode
+vim.opt.guicursor = "n-c-sm:block,i-ci-ve:ver25,v-r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor"
 vim.opt.colorcolumn = "80"
 vim.opt.showmode = false -- lualine shows the mode
 
