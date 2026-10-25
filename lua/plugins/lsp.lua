@@ -20,6 +20,7 @@ return {
 				"lua_ls",
 				"pyright",
 				"rust_analyzer",
+				"zls", -- not the Arch package: zls must match the zig version
 
 				-- Web
 				"html",

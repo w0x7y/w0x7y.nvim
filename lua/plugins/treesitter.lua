@@ -18,6 +18,7 @@ return {
 				"c",
 				"cpp",
 				"c_sharp",
+				"zig",
 
 				-- Shell / config / git
 				"bash",
