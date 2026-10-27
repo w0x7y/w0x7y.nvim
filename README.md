@@ -60,8 +60,7 @@ leader is `<space>`
 | `<leader>fd` | every diagnostic, in the quickfix list |
 | `<leader>e` | toggle the file explorer sidebar (netrw) |
 | `<leader>jf` | format the file or selection |
-| `s` | flash jump |
-| `S` | flash select a treesitter node |
+| `S` | flash jump |
 | `gd` | go to definition |
 
 the other lsp keys are neovim's own: `grr` references, `grn` rename, `gra` code action, `gri` implementation, `gO` symbols, `K` hover
