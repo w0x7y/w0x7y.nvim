@@ -52,3 +52,7 @@ vim.opt.smartcase = true
 -- Splits
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+
+-- Tab / Shift-Tab indent the selection and keep it selected for repeated presses
+vim.keymap.set("x", "<Tab>", ">gv", { desc = "Indent selection" })
+vim.keymap.set("x", "<S-Tab>", "<gv", { desc = "Dedent selection" })
