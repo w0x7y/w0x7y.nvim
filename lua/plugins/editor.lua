@@ -9,7 +9,7 @@ return {
 
 		keys = {
 			{
-				"s",
+				"S",
 				mode = { "n", "x", "o" },
 				function()
 					require("flash").jump({
@@ -23,15 +23,6 @@ return {
 					})
 				end,
 				desc = "Flash",
-			},
-			-- Select a treesitter node by label
-			{
-				"S",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").treesitter()
-				end,
-				desc = "Flash Treesitter",
 			},
 		},
 	},
