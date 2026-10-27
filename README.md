@@ -85,6 +85,9 @@ snippets stay out of the menu. type `@` before a word, like `@for`, to list only
 ~ `<Tab>` and `>>` indent 2 spaces in every filetype. python, rust, markdown and go don't switch to their own style\
 ~ diagnostics show in full under the cursor's line and nowhere else\
 ~ neovim 0.12's new message ui, so no "press ENTER" prompts\
+~ the command line only shows while you type. messages show bottom right on the editor background for 4 seconds, `g<` brings the last one back\
+~ treesitter indents and folds too. files open with every fold open\
+~ `:Undotree` browses the undo history, which survives closing the file\
 ~ lualine shows `recording @q` while a macro records\
 ~ treesitter, lualine, gitsigns, autopairs, ts-autotag, render-markdown, lazydev\
 ~ [better-sql.nvim](https://github.com/w0x7y/better-sql.nvim) with a `supabase` connection read from `~/.pg_service.conf`

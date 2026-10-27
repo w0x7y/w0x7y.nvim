@@ -24,8 +24,6 @@ return {
 							end,
 							color = "WarningMsg",
 						},
-						"encoding",
-						"fileformat",
 						"filetype",
 					},
 				},

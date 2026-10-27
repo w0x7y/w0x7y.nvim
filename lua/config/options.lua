@@ -13,6 +13,8 @@ vim.opt.cursorline = true
 -- Neovim's default cursor shapes, but an underline in visual mode
 vim.opt.guicursor = "n-c-sm:block,i-ci-ve:ver25,v-r-cr-o:hor20,t:block-blinkon500-blinkoff500-TermCursor"
 vim.opt.colorcolumn = "80"
+vim.opt.foldlevel = 99 -- treesitter folds (lua/plugins/treesitter.lua) start open
+vim.cmd.packadd("nvim.undotree") -- :Undotree browses the undofile history
 vim.opt.showmode = false -- lualine shows the mode
 
 -- Looks
@@ -22,10 +24,21 @@ vim.opt.fillchars = { eob = " " } -- no ~ after the end of the buffer
 vim.diagnostic.config({
 	virtual_text = false,
 	virtual_lines = { current_line = true },
+	severity_sort = true, -- the number column fits one sign, so show the worst
 })
 
--- Experimental 0.12 message/cmdline UI: no "Press ENTER" prompts
-require("vim._core.ui2").enable({})
+-- Experimental 0.12 message/cmdline UI: no "Press ENTER" prompts.
+-- The command line only appears while typing; messages pop up bottom right and fade
+vim.opt.cmdheight = 0
+-- ui2 sets this filetype in the message window when it opens it: no border, editor background
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "msg",
+	callback = function()
+		vim.api.nvim_win_set_config(0, { border = "none" })
+		vim.opt_local.winhighlight:append("NormalFloat:Normal")
+	end,
+})
+require("vim._core.ui2").enable({ msg = { targets = "msg" } })
 
 -- Briefly highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {

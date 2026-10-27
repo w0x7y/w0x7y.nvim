@@ -13,4 +13,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Load every spec in lua/plugins/
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+	rocks = { enabled = false }, -- no plugin here needs luarocks
+})
